@@ -1,0 +1,251 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unlock Link</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #111;
+      --box: #f0f0f0;
+      --primary: #ff0000;
+      --accent: #28a745;
+      --progress: #00ff88;
+    }[data-theme="dark"] {
+  --bg: #121212;
+  --text: #ffffff;
+  --box: #1e1e1e;
+  --primary: #ff0000;
+  --accent: #00cc66;
+  --progress: #00ff88;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 480px;
+  margin: auto;
+  padding: 20px;
+}
+
+.toggle-theme {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.toggle-theme button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--box);
+  color: var(--text);
+}
+
+.card {
+  background: var(--box);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: gray;
+  margin-bottom: 20px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: 600;
+  font-size: 15px;
+  width: 100%;
+  transition: 0.3s;
+  margin-bottom: 14px;
+  box-sizing: border-box;
+}
+
+.action-btn.done {
+  background: #444;
+  color: #ccc;
+  position: relative;
+}
+
+.action-btn.done::after {
+  content: '\2713';
+  position: absolute;
+  right: 16px;
+  font-size: 18px;
+  color: lime;
+}
+
+.progress-label {
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #333;
+  border-radius: 4px;
+  margin: 8px 0 20px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--progress);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.unlock-btn {
+  background: #666;
+  color: #ddd;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-weight: bold;
+  font-size: 15px;
+  width: 100%;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.unlock-btn.enabled {
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+.unlock-btn.loading::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  width: 16px;
+  height: 16px;
+  border: 3px solid white;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.faq {
+  background: var(--box);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 30px;
+}
+
+.faq h2 {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.faq p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: gray;
+}
+
+  </style>
+</head>
+<body data-theme="light"><div class="container">
+  <div class="toggle-theme">
+    <button onclick="toggleTheme()">🌓 Ganti Mode</button>
+  </div>  <div class="card">
+    <h1>Unlock Link</h1>
+    <p class="subtitle">Complete the actions and unlock the link</p><button id="btnSub" class="action-btn" onclick="openChannel()">Subscribe on YouTube</button>
+<button id="btnLike" class="action-btn" onclick="openVideo()">Like & Comment on Video</button>
+
+<div class="progress-label" id="progressText">unlock progress 0/2</div>
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<button id="btnUnlock" class="unlock-btn" disabled>🔒 Unlock Link</button>
+
+  </div>  <div class="faq">
+    <h2>- FAQ -</h2>
+    <p><strong>How to unlock link?</strong><br>
+      Complete all the actions one by one. When you're done, the green button will be clickable. Wait 5 seconds to get access.
+    </p>
+  </div>
+</div><script>
+  const params = new URLSearchParams(window.location.search);
+  const channel = params.get('channel');
+  const video = params.get('video');
+  const tujuan = params.get('tujuan');
+
+  let progress = 0;
+
+  function openChannel() {
+    if (!channel) return alert("Link channel tidak tersedia.");
+    window.open(channel, "_blank");
+    document.getElementById("btnSub").disabled = true;
+    document.getElementById("btnSub").classList.add("done");
+    updateProgress();
+  }
+
+  function openVideo() {
+    if (!video) return alert("Link video tidak tersedia.");
+    window.open(video, "_blank");
+    document.getElementById("btnLike").disabled = true;
+    document.getElementById("btnLike").classList.add("done");
+    updateProgress();
+  }
+
+  function updateProgress() {
+    progress++;
+    document.getElementById("progressText").innerText = `unlock progress ${progress}/2`;
+    document.getElementById("progressFill").style.width = `${(progress / 2) * 100}%`;
+
+    if (progress === 2) {
+      const unlockBtn = document.getElementById("btnUnlock");
+      unlockBtn.classList.add("loading");
+      unlockBtn.innerText = "Loading...";
+
+      setTimeout(() => {
+        unlockBtn.disabled = false;
+        unlockBtn.classList.remove("loading");
+        unlockBtn.classList.add("enabled");
+        unlockBtn.innerText = "✅ Access Final Link";
+        unlockBtn.onclick = () => {
+          window.open(tujuan, "_blank");
+        };
+      }, 5000);
+    }
+  }
+
+  function toggleTheme() {
+    const current = document.body.getAttribute("data-theme");
+    document.body.setAttribute("data-theme", current === "light" ? "dark" : "light");
+  }
+</script></body>
+</html>

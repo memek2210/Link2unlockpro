@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Link Unlock Generator</title>
+  <style>
+    :root {
+      --bg-light: #f0f0f0;
+      --bg-dark: #0d1117;
+      --text-light: #1a1a1a;
+      --text-dark: #f0f0f0;
+      --card-light: #ffffffee;
+      --card-dark: #1c1c1cee;
+      --primary: #4caf50;
+      --primary-hover: #43a047;
+      --secondary: #007bff;
+      --secondary-hover: #0056b3;
+      --radius: 12px;
+    }
+
+    [data-theme="light"] {
+      --bg: var(--bg-light);
+      --text: var(--text-light);
+      --card: var(--card-light);
+    }
+
+    [data-theme="dark"] {
+      --bg: var(--bg-dark);
+      --text: var(--text-dark);
+      --card: var(--card-dark);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 16px;
+      transition: background 0.4s, color 0.4s;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 30%, rgba(100, 100, 255, 0.2), transparent 40%),
+                  radial-gradient(circle at 70% 70%, rgba(0, 255, 150, 0.2), transparent 40%);
+      animation: moveBackground 20s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(-10%, -10%); }
+      100% { transform: translate(0, 0); }
+    }
+
+    .box {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 400px;
+      padding: 24px;
+      position: relative;
+    }
+
+    .mode-toggle {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+    }
+
+    .mode-toggle button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--text);
+      background: none;
+      color: var(--text);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.3s;
+    }
+
+    .mode-toggle button:hover {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 16px;
+      font-size: 18px;
+    }
+
+    input[type="url"],
+    input[readonly] {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: var(--radius);
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .generate-btn {
+      background-color: var(--primary);
+      color: white;
+      margin-top: 12px;
+    }
+
+    .generate-btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .copy-btn {
+      background-color: var(--secondary);
+      color: white;
+      margin-top: 10px;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--secondary-hover);
+    }
+
+    .copy-section {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .success {
+      margin-top: 10px;
+      text-align: center;
+      color: var(--primary);
+      font-size: 14px;
+    }
+
+    .faq {
+      margin-top: 30px;
+    }
+
+    .faq h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: red;
+    }
+
+    .accordion {
+      background: transparent;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .accordion-header {
+      padding: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      background-color: transparent;
+    }
+
+    .accordion-header:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .accordion-body {
+      padding: 12px;
+      font-size: 14px;
+      display: none;
+      border-top: 1px solid #ccc;
+    }
+
+    .accordion.active .accordion-body {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <div class="mode-toggle">
+      <button onclick="toggleTheme()">🌗</button>
+    </div>
+
+    <h2>🔗 Masukkan Data Link</h2>
+    <input type="url" id="channelLink" placeholder="URL Channel YouTube">
+    <input type="url" id="videoLink" placeholder="URL Video YouTube">
+    <input type="url" id="finalLink" placeholder="Link Tujuan Akhir">
+    <button class="generate-btn" onclick="generateUnlockLink()">🔒 Buat Link Unlock</button>
+
+    <div class="copy-section" id="copySection">
+      <input type="text" id="generatedLink" readonly />
+      <button class="copy-btn" onclick="copyLink()">📋 Salin Link</button>
+      <div class="success" id="successMsg">✅ Link berhasil dibuat!</div>
+    </div>
+
+    <div class="faq">
+      <h3>❓ FAQ (Pertanyaan Umum)</h3>
+
+      <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">Apa itu Link Unlock?</div>
+        <div class="accordion-body">
+          Link Unlock adalah tautan yang mengharuskan pengguna menyelesaikan langkah tertentu sebelum diarahkan ke tujuan akhir.
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">Bagaimana cara membuat Link Unlock?</div>
+        <div class="accordion-body">
+          Masukkan URL channel, video, dan link akhir, lalu klik "Buat Link Unlock". Sistem akan menghasilkan tautan unik untuk dibagikan.
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">Apakah bisa digunakan di semua browser?</div>
+        <div class="accordion-body">
+          Ya, generator ini kompatibel dengan semua browser modern dan perangkat mobile.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute("data-theme");
+      html.setAttribute("data-theme", current === "dark" ? "light" : "dark");
+    }
+
+    function generateUnlockLink() {
+      const channel = document.getElementById('channelLink').value.trim();
+      const video = document.getElementById('videoLink').value.trim();
+      const tujuan = document.getElementById('finalLink').value.trim();
+
+      if (!channel || !video || !tujuan) {
+        alert('Harap isi semua kolom!');
+        return;
+      }
+
+      const params = new URLSearchParams({ channel, video, tujuan });
+      const unlockLink = `${window.location.origin}/unlock.html?${params.toString()}`;
+      document.getElementById('generatedLink').value = unlockLink;
+      document.getElementById('copySection').style.display = 'block';
+    }
+
+    function copyLink() {
+      const copyText = document.getElementById("generatedLink");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(copyText.value).then(() => {
+        alert("Link berhasil disalin ke clipboard!");
+      }).catch(() => {
+        alert("Gagal menyalin. Salin manual.");
+      });
+    }
+
+    function toggleAccordion(el) {
+      el.parentElement.classList.toggle("active");
+    }
+  </script>
+
+</body>
+</html>
